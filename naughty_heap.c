@@ -1,18 +1,19 @@
 #include "naughty_heap.h"
 #include "assert.h"
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-naughty_exception naughty_heap_initial(struct naughty_heap_t *heap_ptr, void *begin_addr, void *end_addr, uint64_t verify_number)
+naughty_exception naughty_heap_initialize(struct naughty_heap_t *heap_ptr, void *begin_addr, void *end_addr, uint64_t verify_number)
 {
     naughty_exception func_res = naughty_exception_no;
 
     heap_ptr->verify_number = verify_number;
 
-    func_res = naughty_list_initial(&heap_ptr->heap_list_header);
+    func_res = naughty_list_initialize(&heap_ptr->heap_list_header, NULL);
     if (func_res != naughty_exception_no)
     {
         goto func_end;
@@ -32,8 +33,8 @@ naughty_exception naughty_heap_initial(struct naughty_heap_t *heap_ptr, void *be
     ((struct naughty_heap_list_container_t *)end_addr - 1)->is_under_using = 1;
     ((struct naughty_heap_list_container_t *)end_addr - 1)->verify_number = heap_ptr->verify_number;
 
-    naughty_list_insert_node(&heap_ptr->heap_list_header, &heap_ptr->heap_list_header, &((struct naughty_heap_list_container_t *)begin_addr)->heap_list_node);
-    naughty_list_insert_node(&heap_ptr->heap_list_header, &heap_ptr->heap_list_header, &((struct naughty_heap_list_container_t *)end_addr - 1)->heap_list_node);
+    naughty_list_insert_after(&heap_ptr->heap_list_header, &heap_ptr->heap_list_header, &((struct naughty_heap_list_container_t *)begin_addr)->heap_list_node);
+    naughty_list_insert_after(&heap_ptr->heap_list_header, heap_ptr->heap_list_header.first_node, &((struct naughty_heap_list_container_t *)end_addr - 1)->heap_list_node);
 
 func_end:
     return func_res;
@@ -106,7 +107,7 @@ naughty_exception naughty_heap_all_blocks_merge(struct naughty_heap_t *heap_ptr)
     {
         if (!previous_node_ptr->is_under_using && !current_node_ptr->is_under_using)
         {
-            func_res = naughty_list_remove_node(&heap_ptr->heap_list_header, &current_node_ptr->heap_list_node);
+            func_res = naughty_list_unlink_node(&heap_ptr->heap_list_header, &current_node_ptr->heap_list_node);
             if (func_res != naughty_exception_no)
             {
                 goto func_end;
@@ -165,22 +166,22 @@ naughty_exception naughty_heap_free(struct naughty_heap_t *heap_ptr, void *addr)
         {
             if (node_ptr->is_under_using)
             {
+                if (node_ptr->heap_list_node.next && !naughty_container_of(node_ptr->heap_list_node.next, struct naughty_heap_list_container_t, heap_list_node)->is_under_using)
+                {
+                    func_res = naughty_list_unlink_node(&heap_ptr->heap_list_header, node_ptr->heap_list_node.next);
+                    if (func_res != naughty_exception_no)
+                    {
+                        goto func_end;
+                    }
+                }
                 if (node_ptr == naughty_container_of(heap_ptr->heap_list_header.first_node, struct naughty_heap_list_container_t, heap_list_node) || naughty_container_of(node_ptr->heap_list_node.previous, struct naughty_heap_list_container_t, heap_list_node)->is_under_using)
                 {
                     node_ptr->is_under_using = 0;
-                    if (node_ptr->heap_list_node.next && !naughty_container_of(node_ptr->heap_list_node.previous, struct naughty_heap_list_container_t, heap_list_node)->is_under_using)
-                    {
-                        func_res = naughty_list_remove_node(&heap_ptr->heap_list_header, node_ptr->heap_list_node.next);
-                        if (func_res != naughty_exception_no)
-                        {
-                            goto func_end;
-                        }
-                    }
                     func_res = naughty_exception_no;
                 }
                 else
                 {
-                    func_res = naughty_list_remove_node(&heap_ptr->heap_list_header, &node_ptr->heap_list_node);
+                    func_res = naughty_list_unlink_node(&heap_ptr->heap_list_header, &node_ptr->heap_list_node);
                     if (func_res != naughty_exception_no)
                     {
                         goto func_end;

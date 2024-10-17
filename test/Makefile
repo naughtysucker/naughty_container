@@ -19,6 +19,10 @@ test_fifo: ../naughty_fifo.c ../naughty_fifo.h
 	gcc $^ -I.. -c -g -std=c99 -DARCH_BIT_WIDTH=64
 	g++ ./naughty_fifo.o ./test_fifo.cc -I.. -o $@ -g
 
+test_heap: ../naughty_heap.c ../naughty_list.c 
+	gcc $^ -I.. -c -g -std=c99 -DARCH_BIT_WIDTH=64
+	g++ ./naughty_heap.o ./naughty_list.o ./test_heap.cc -I.. -DUSE_BACKTRACE -g -o test_heap
+
 .PHONY: clean
 
 clean:

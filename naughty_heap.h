@@ -25,7 +25,7 @@ struct naughty_heap_t
 
 #define naughty_heap_get_block_data_address(heap_list_container_ptr) ((uint8_t*)heap_list_container_ptr + sizeof(struct naughty_heap_list_container_t))
 
-naughty_exception naughty_heap_initial(struct naughty_heap_t *heap_ptr, void *begin_addr, void *end_addr, uint64_t verify_number);
+naughty_exception naughty_heap_initialize(struct naughty_heap_t *heap_ptr, void *begin_addr, void *end_addr, uint64_t verify_number);
 
 naughty_exception naughty_heap_get_node_block_size(struct naughty_heap_list_container_t *heap_node_ptr, size_t *output_size_ptr);
 
