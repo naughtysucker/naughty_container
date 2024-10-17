@@ -22,7 +22,7 @@
  * _Return
  *  @Address of the Container.
  */
-#define naughty_container_of(member_ptr, type, member) ((type *)((uint8_t *)member_ptr - (uint8_t *)&((type *)0)->member))
+#define naughty_container_of(member_ptr, type, member) ((type *)((byte_t *)member_ptr - (byte_t *)&((type *)0)->member))
 
 #define naughty_member_of(container_ptr, member) (&container_ptr->member)
 

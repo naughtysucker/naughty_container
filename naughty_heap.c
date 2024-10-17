@@ -22,7 +22,7 @@ naughty_exception naughty_heap_initialize(struct naughty_heap_t *heap_ptr, void 
     heap_ptr->begin_addr = begin_addr;
     heap_ptr->end_addr = end_addr;
     
-    if ((uint8_t*)end_addr - (uint8_t*)begin_addr < sizeof(struct naughty_heap_list_container_t)*2)
+    if ((byte_t*)end_addr - (byte_t*)begin_addr < sizeof(struct naughty_heap_list_container_t)*2)
     {
         func_res = naughty_exception_runout;
         goto func_end;
@@ -46,7 +46,7 @@ naughty_exception naughty_heap_get_node_block_size(struct naughty_heap_list_cont
 
     if (heap_node_ptr->heap_list_node.next)
     {
-        *output_size_ptr = (uint8_t*)naughty_container_of(heap_node_ptr->heap_list_node.next, struct naughty_heap_list_container_t, heap_list_node) - naughty_heap_get_block_data_address(heap_node_ptr);
+        *output_size_ptr = (byte_t*)naughty_container_of(heap_node_ptr->heap_list_node.next, struct naughty_heap_list_container_t, heap_list_node) - naughty_heap_get_block_data_address(heap_node_ptr);
     }
     else
     {
@@ -135,9 +135,10 @@ naughty_exception naughty_heap_alloc(struct naughty_heap_t *heap_ptr, size_t siz
         if (!node_ptr->is_under_using)
         {
             size_t current_node_size = 0;
-            func_res = naughty_heap_get_node_block_size(node_ptr, &current_node_size);
-            if (func_res != naughty_exception_no)
+            naughty_exception res = naughty_heap_get_node_block_size(node_ptr, &current_node_size);
+            if (res != naughty_exception_no)
             {
+                func_res = res;
                 goto func_end;
             }
             if (size <= current_node_size)

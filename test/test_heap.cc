@@ -33,8 +33,14 @@ int main()
         assert(res == naughty_exception_no);
         printf("Free ptr: 0x%p \r\n", bufs[i]);
     }
+#if 0
+    res = naughty_heap_free(&g_heap_ins, bufs[0]);
+    printf("res: %d\r\n", res);
+    assert(res == naughty_exception_no);
+#endif
 
-    res = naughty_heap_alloc(&g_heap_ins, 1024*1024*1024, &bufs[0]);
+    res = naughty_heap_alloc(&g_heap_ins, 1024*1024*1024 - sizeof(struct naughty_heap_list_container_t)*2 + 1, &bufs[0]);
+    printf("res: %d\r\n", res);
     assert(res == naughty_exception_no);
 
     return 0;

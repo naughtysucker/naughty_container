@@ -109,7 +109,7 @@ naughty_exception naughty_log_push_back(struct naughty_log_struct *log_struct_pt
 		}
 	}
 
-	func_exception = naughty_fifo_push_back(&log_struct_ptr->log_fifo, (uint8_t *)&buffer);
+	func_exception = naughty_fifo_push_back(&log_struct_ptr->log_fifo, (byte_t *)&buffer);
 	if (func_exception != naughty_exception_no)
 	{
 		log_struct_ptr->mem_free(buffer);

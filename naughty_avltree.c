@@ -51,7 +51,7 @@ naughty_exception naughty_avltree_alloc_node_by_size(struct naughty_avltree_head
 		}
 		goto func_alloc_exception;
 	}
-	*avltree_node_ptr_ptr = (struct naughty_avltree_node *)((uint8_t *)container_memory_ptr + offset);
+	*avltree_node_ptr_ptr = (struct naughty_avltree_node *)((byte_t *)container_memory_ptr + offset);
 	((struct naughty_avltree_node *)*avltree_node_ptr_ptr)->data_ptr = data_memory_ptr;
 
 func_end:
@@ -78,7 +78,7 @@ naughty_exception naughty_avltree_release_node_by_offset(struct naughty_avltree_
 	{
 		avltree_header_ptr->memory_free(avltree_node_ptr->data_ptr);
 	}
-	avltree_header_ptr->memory_free((uint8_t *)avltree_node_ptr + offset);
+	avltree_header_ptr->memory_free((byte_t *)avltree_node_ptr + offset);
 
 func_end:
 	return func_exception;

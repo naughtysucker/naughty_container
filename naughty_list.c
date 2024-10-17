@@ -35,7 +35,7 @@ naughty_exception naughty_list_remove_node_by_offset(struct naughty_list_header 
 		goto func_end;
 	}
 
-	list_header_ptr->memory_free((uint8_t *)removed_list_node_ptr + offset);
+	list_header_ptr->memory_free((byte_t *)removed_list_node_ptr + offset);
 
 func_end:
 	return func_exception;
@@ -282,7 +282,7 @@ naughty_exception naughty_list_alloc_node_by_size(struct naughty_list_header *li
 		func_exception = naughty_exception_alloc;
 		goto func_alloc_exception;
 	}
-	*list_node_ptr_ptr = (struct naughty_list_node *)((uint8_t *)container_memory_ptr + offset);
+	*list_node_ptr_ptr = (struct naughty_list_node *)((byte_t *)container_memory_ptr + offset);
 
 	goto func_end;
 	
@@ -314,7 +314,7 @@ naughty_exception naughty_list_release_node_by_offset(struct naughty_list_header
 		goto func_end;
 	}
 
-	list_header_ptr->memory_free((uint8_t *)list_node_ptr + offset);
+	list_header_ptr->memory_free((byte_t *)list_node_ptr + offset);
 
 func_end:
 	return naughty_exception_no;
