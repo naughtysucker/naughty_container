@@ -15,17 +15,17 @@ extern "C"
 #endif
 
 #include "naughty_exception.h"
+#include "naughty_common.h"
 #include <stdint.h>
 #include <stdio.h>
 
 struct naughty_fifo
 {
 	size_t unit_size;
-	uint8_t *buffer;
+	void *buffer;
 	size_t buffer_size;
 	size_t begin_cursor;
 	size_t fulled_size;
-	size_t locked_size;
 };
 
 /**_Description
@@ -37,7 +37,7 @@ struct naughty_fifo
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_fifo_construction(struct naughty_fifo *fifo_ptr, size_t unit_size, size_t buffer_size);
+naughty_exception naughty_fifo_initialize(struct naughty_fifo *fifo_ptr, size_t unit_size, size_t buffer_size, void *buffer);
 
 /**_Description
  *  @Deconstruct fifo struct.
@@ -46,7 +46,7 @@ naughty_exception naughty_fifo_construction(struct naughty_fifo *fifo_ptr, size_
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_fifo_deconstruction(struct naughty_fifo *fifo_ptr);
+naughty_exception naughty_fifo_release(struct naughty_fifo *fifo_ptr);
 
 /**_Description
  *  @Push back a unit into fifo.
@@ -56,27 +56,26 @@ naughty_exception naughty_fifo_deconstruction(struct naughty_fifo *fifo_ptr);
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_fifo_push_back(struct naughty_fifo *fifo_ptr, uint8_t *unit);
+naughty_exception naughty_fifo_push_back(struct naughty_fifo *fifo_ptr, void *unit);
 
 /**_Description
  *  @Pop a unit from fifo.
  * _Parameters
  *  @fifo_ptr: Pointer of fifo.
- *  @unit_ptr: Pointer of unit. What's important, this pointer points to addresses in fifo's buffer.
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_fifo_pop_front(struct naughty_fifo *fifo_ptr, uint8_t **unit_ptr);
+naughty_exception naughty_fifo_pop_front(struct naughty_fifo *fifo_ptr);
 
 /**_Description
- *  @Pop a unit from fifo and lock it in case new unit data overwrite the poped unit.
+ *  @Get the First Unit's ptr
  * _Parameters
  *  @fifo_ptr: Pointer of fifo.
- *  @unit_ptr: Pointer of unit.
+ *  @unit_ptr: Output
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_fifo_pop_front_and_lock(struct naughty_fifo *fifo_ptr, uint8_t **unit_ptr);
+naughty_exception naughty_fifo_get_front(struct naughty_fifo *fifo_ptr, void **unit_ptr);
 
 /**_Description
  *  @Get fifo's buffer_size.
@@ -86,7 +85,25 @@ naughty_exception naughty_fifo_pop_front_and_lock(struct naughty_fifo *fifo_ptr,
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_fifo_get_size(struct naughty_fifo *fifo_ptr, size_t *size_ptr);
+naughty_exception naughty_fifo_get_buffer_size(struct naughty_fifo *fifo_ptr, size_t *size_ptr);
+
+/**_Description
+ *  @Get fifo's buffer_size.
+ * _Parameters
+ *  @fifo_ptr: Pointer of fifo.
+ * _Return
+ *  @Fifo's buffer size
+ */
+size_t naughty_fifo_buffer_size(struct naughty_fifo *fifo_ptr);
+
+/**_Description
+ *  @Get fifo's fulled_size.
+ * _Parameters
+ *  @fifo_ptr: Pointer of fifo.
+ * _Return
+ *  @Fifo's Size
+ */
+size_t naughty_fifo_size(struct naughty_fifo *fifo_ptr);
 
 /**_Description
  *  @Get fifo's fulled_size.
@@ -107,6 +124,35 @@ naughty_exception naughty_fifo_get_fulled_size(struct naughty_fifo *fifo_ptr, si
  *  @Exceptions
  */
 naughty_exception naughty_fifo_get_rest_size(struct naughty_fifo *fifo_ptr, size_t *size_ptr);
+
+/**_Description
+ *  @Get fifo's rest size.
+ * _Parameters
+ *  @fifo_ptr: Pointer of fifo.
+ * _Return
+ *  @Fifo's rest size
+ */
+size_t naughty_fifo_rest_size(struct naughty_fifo *fifo_ptr);
+
+/**_Description
+ *  @Get the Unit's ptr
+ * _Parameters
+ *  @fifo_ptr: Pointer of fifo.
+ *  @unit_ptr: Output
+ * _Return
+ *  @Exceptions
+ */
+naughty_exception naughty_fifo_get_data(struct naughty_fifo *fifo_ptr, size_t index, void **data);
+
+/**_Description
+ *  @Set the Unit's ptr
+ * _Parameters
+ *  @fifo_ptr: Pointer of fifo.
+ *  @unit_ptr: Input
+ * _Return
+ *  @Exceptions
+ */
+naughty_exception naughty_fifo_set_data(struct naughty_fifo *fifo_ptr, size_t index, void *unit_ptr);
 
 #ifdef __cplusplus
 }
