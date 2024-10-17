@@ -307,58 +307,6 @@ func_end:
 }
 
 /**_Description
- *  @Alloc a list node.
- * _Parameters
- *  @list_header_ptr: Pointer of list header.
- *  @container_memory_size: Size of memory will be alloced for container.
- *  @data_memory_size: Size of memory will be alloced for data.
- *  @offset: Address of list node minus container_of(list node).
- *  @list_node_ptr_ptr: Pointer of list node's pointer.
- * _Return
- *  @Exceptions
- */
-naughty_exception naughty_list_alloc_node_by_size(struct naughty_list_header *list_header_ptr, size_t container_memory_size, size_t data_memory_size, size_t offset, struct naughty_list_node **list_node_ptr_ptr)
-{
-	naughty_exception func_exception = naughty_exception_no;
-
-	if (!(list_header_ptr && list_node_ptr_ptr))
-	{
-		func_exception = naughty_exception_nullptr;
-		goto func_end;
-	}
-	void *container_memory_ptr = list_header_ptr->memory_alloc(container_memory_size);
-	void *data_memory_ptr = NULL;
-	if (data_memory_size)
-	{
-		data_memory_ptr = list_header_ptr->memory_alloc(data_memory_size);
-	}
-	if (!container_memory_ptr || (data_memory_size && !data_memory_ptr))
-	{
-		func_exception = naughty_exception_alloc;
-		goto func_alloc_exception;
-	}
-	*list_node_ptr_ptr = (struct naughty_list_node *)((uint8_t *)container_memory_ptr + offset);
-	((struct naughty_list_node *)*list_node_ptr_ptr)->data_ptr = data_memory_ptr;
-
-	goto func_end;
-	
-func_alloc_exception:
-	if (list_header_ptr->memory_free)
-	{
-		if (container_memory_ptr)
-		{
-			list_header_ptr->memory_free(container_memory_ptr);
-		}
-		if (data_memory_ptr)
-		{
-			list_header_ptr->memory_free(data_memory_ptr);
-		}
-	}
-func_end:
-	return func_exception;
-}
-
-/**_Description
  *  @ Release a list node.
  * _Parameters
  *  @list_header_ptr: Pointer of list header.
@@ -379,10 +327,6 @@ naughty_exception naughty_list_release_node_by_offset(struct naughty_list_header
 
 	if (list_header_ptr->memory_free)
 	{
-		if (list_node_ptr->data_ptr)
-		{
-			list_header_ptr->memory_free(list_node_ptr->data_ptr);
-		}
 		list_header_ptr->memory_free((uint8_t *)list_node_ptr + offset);
 	}
 

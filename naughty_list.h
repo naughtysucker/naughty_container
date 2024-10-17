@@ -22,16 +22,6 @@ extern "C"
 #include <stdlib.h>
 
 /**_Description
- *  @Get the list node's data pointer.
- * _Parameters
- *  @list_node_ptr: Pointer of list node.
- *  @type: Type of list node's data.
- * _Return
- *  @List node's data.
- */
-#define naughty_list_data_of(list_node_ptr, type) (*(type *)(((struct naughty_list_node *)list_node_ptr)->data_ptr))
-
-/**_Description
  *  @Alloc a list node container with list header's memory_alloc function.
  * _Parameters
  *  @list_header_ptr: Pointer of list header.
@@ -57,46 +47,19 @@ extern "C"
 #define naughty_list_node_ptr_of(container_ptr, container_type, list_node_member) ((struct naughty_list_node *)&((container_type*)container_ptr)->list_node_member)
 
 /**_Description
- *  @Alloc list node data with list header's memory_alloc function.
- * _Parameters
- *  @list_header_ptr: Pointer of list header.
- *  @type: Type of the list node's data.
- * _Return
- *  @Pointer of alloced list node's data.
- *	@if 0:
- *		alloc failed
- *  @if not 0:
- *		alloc success
- */
-#define naughty_list_alloc_node_data(list_header_ptr, data_type) ((data_type *)((struct naughty_list_header *)list_header_ptr)->memory_alloc(sizeof(data_type)))
-
-/**_Description
  *  @Alloc list node.
  * _Parameters
  *  @list_header_ptr: Pointer of list header.
  *  @container_type: Type of containre.
  *  @list_node_member: Name of list node member.
- *  @data_type: Type of list node data.
  *  @list_node_ptr_ptr: Pointer of list node's pointer.
  * _Return
  *  @Exceptions.
  */
-#define naughty_list_alloc_node(list_header_ptr, container_type, list_node_member, data_type, list_node_ptr_ptr) naughty_list_alloc_node_by_size(list_header_ptr, sizeof(container_type), sizeof(data_type), (ssize_t)&((container_type *)0)->list_node_member, list_node_ptr_ptr)
+#define naughty_list_alloc_node(list_header_ptr, container_type, list_node_member, list_node_ptr_ptr) naughty_list_alloc_node_by_size(list_header_ptr, sizeof(container_type), 0, (ssize_t)&((container_type *)0)->list_node_member, list_node_ptr_ptr)
 
 /**_Description
- *  @Alloc list node without alloc data.
- * _Parameters
- *  @list_header_ptr: Pointer of list header.
- *  @container_type: Type of containre.
- *  @list_node_member: Name of list node member.
- *  @list_node_ptr_ptr: Pointer of list node's pointer.
- * _Return
- *  @Exceptions.
- */
-#define naughty_list_alloc_node_without_data(list_header_ptr, container_type, list_node_member, list_node_ptr_ptr) naughty_list_alloc_node_by_size(list_header_ptr, sizeof(container_type), 0, (ssize_t)&((container_type *)0)->list_node_member, list_node_ptr_ptr)
-
-/**_Description
- *  @Release all of the list's nodes and data.
+ *  @Release all of the list's nodes.
  * _Parameters
  *  @list_header_ptr: Pointer of list header.
  *  @container_type: Type of container.
@@ -132,7 +95,6 @@ struct naughty_list_node
 {
 	struct naughty_list_node *previous;
 	struct naughty_list_node *next;
-	void *data_ptr;
 };
 
 struct naughty_list_node_container
@@ -220,19 +182,6 @@ extern naughty_exception naughty_list_get_size(struct naughty_list_header *list_
  *  @Exceptions.
  */
 extern naughty_exception naughty_list_at(struct naughty_list_header *list_header_ptr, size_t index, struct naughty_list_node **output_list_node_ptr_ptr);
-
-/**_Description
- *  @Alloc a list node.
- * _Parameters
- *  @list_header_ptr: Pointer of list header.
- *  @container_memory_size: Size of memory will be alloced for container.
- *  @data_memory_size: Size of memory will be alloced for data.
- *  @offset: Address of list node minus container_of(list node).
- *  @list_node_ptr_ptr: Pointer of container's pointer.
- * _Return
- *  @Exceptions
- */
-extern naughty_exception naughty_list_alloc_node_by_size(struct naughty_list_header *list_header_ptr, size_t container_memory_size, size_t data_memory_size, size_t offset, struct naughty_list_node **list_node_ptr_ptr);
 
 /**_Description
  *  @ Release a list node.
