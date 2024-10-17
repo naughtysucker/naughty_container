@@ -85,13 +85,13 @@ func_end:
 }
 
 /**_Description
- *  @Initial avl tree.
+ *  @Initialize avl tree.
  * _Parameters
  *  @header_ptr: Avl tree's header.
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_avltree_initial(struct naughty_avltree_header *header_ptr)
+naughty_exception naughty_avltree_initialize(struct naughty_avltree_header *header_ptr, int32_t (*compare_function)(struct naughty_avltree_node *, struct naughty_avltree_node *))
 {
 	naughty_exception func_exception = naughty_exception_no;
 
@@ -99,7 +99,7 @@ naughty_exception naughty_avltree_initial(struct naughty_avltree_header *header_
 
 	header_ptr->root_node = NULL;
 	header_ptr->size = 0;
-	header_ptr->compare_function = NULL;
+	header_ptr->compare_function = compare_function;
 	header_ptr->memory_alloc = malloc;
 	header_ptr->memory_free = free;
 
@@ -530,6 +530,11 @@ naughty_exception naughty_avltree_get_previous_node(struct naughty_avltree_node 
 
 	*previous_node_ptr_ptr = previous_node_ptr;
 
+	if (!previous_node_ptr)
+	{
+		func_exception = naughty_exception_runout;
+	}
+
 func_end:
 	return func_exception;
 }
@@ -572,6 +577,11 @@ naughty_exception naughty_avltree_get_next_node(struct naughty_avltree_node *cur
 	}
 
 	*next_node_ptr_ptr = next_node_ptr;
+
+	if (!next_node_ptr)
+	{
+		func_exception = naughty_exception_runout;
+	}
 
 func_end:
 	return func_exception;
@@ -766,7 +776,7 @@ func_normal_end:
  */
 naughty_exception naughty_avltree_find_node(struct naughty_avltree_header *avltree_header_ptr, struct naughty_avltree_node *avltree_node_ptr_for_compare, struct naughty_avltree_node **output_node_ptr_ptr)
 {
-	naughty_exception func_exception = naughty_exception_no;
+	naughty_exception func_exception = naughty_exception_notfound;
 
 	*output_node_ptr_ptr = NULL;
 	for (struct naughty_avltree_node *avltree_node_ptr = avltree_header_ptr->root_node; avltree_node_ptr; )
@@ -782,6 +792,7 @@ naughty_exception naughty_avltree_find_node(struct naughty_avltree_header *avltr
 		else
 		{
 			*output_node_ptr_ptr = avltree_node_ptr;
+			func_exception = naughty_exception_no;
 			break;
 		}
 	}
@@ -963,12 +974,13 @@ func_end:
  */
 naughty_exception naughty_avltree_get_first_node(struct naughty_avltree_header *avltree_header_ptr, struct naughty_avltree_node **first_node_ptr_ptr)
 {
-	naughty_exception func_exception = naughty_exception_no;
+	naughty_exception func_exception = naughty_exception_notfound;
 
 	struct naughty_avltree_node *least_node_ptr = NULL;
 	for (struct naughty_avltree_node *node_ptr = avltree_header_ptr->root_node; node_ptr; node_ptr = node_ptr->left_node)
 	{
 		least_node_ptr = node_ptr;
+		func_exception = naughty_exception_no;
 	}
 
 	*first_node_ptr_ptr = least_node_ptr;

@@ -18,7 +18,7 @@ void* testfunc()
 
 int main()
 {
-	int ex = naughty_global_memory_diagnosis_struct_initial(8);
+	int ex = naughty_global_memory_diagnosis_struct_initialize(8);
 
 	int *ptr1 = (int*)calloc(9, 120);
 

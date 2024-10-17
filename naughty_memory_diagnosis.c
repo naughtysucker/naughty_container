@@ -28,9 +28,9 @@ void naughty_global_memory_diagnosis_memory_free(void *mem_ptr)
 }
 #endif
 
-naughty_exception naughty_global_memory_diagnosis_struct_initial(size_t size)
+naughty_exception naughty_global_memory_diagnosis_struct_initialize(size_t size)
 {
-	return naughty_memory_diagnosis_struct_initial(&naughty_global_memory_diagnosis_struct, size);
+	return naughty_memory_diagnosis_struct_initialize(&naughty_global_memory_diagnosis_struct, size);
 }
 
 naughty_exception naughty_global_memory_diagnosis_output_to_file(FILE *opened_fp)
@@ -94,14 +94,14 @@ int32_t naughty_memory_diagnosis_avltree_node_compare(struct naughty_avltree_nod
 	return 0;
 }
 
-naughty_exception naughty_memory_diagnosis_struct_initial(struct naughty_memory_diagnosis_struct *mem_dia_struct_ptr, size_t backtrace_depth)
+naughty_exception naughty_memory_diagnosis_struct_initialize(struct naughty_memory_diagnosis_struct *mem_dia_struct_ptr, size_t backtrace_depth)
 {
 	mem_dia_struct_ptr->memory_alloc = malloc;
 	mem_dia_struct_ptr->memory_free = free;
 	mem_dia_struct_ptr->memory_realloc = realloc;
 	mem_dia_struct_ptr->memory_calloc = calloc;
-	naughty_avltree_initial(&mem_dia_struct_ptr->remained_node_avltree_header);
-	mem_dia_struct_ptr->remained_node_avltree_header.compare_function = naughty_memory_diagnosis_avltree_node_compare;
+	naughty_avltree_initialize(&mem_dia_struct_ptr->remained_node_avltree_header, naughty_memory_diagnosis_avltree_node_compare);
+	// mem_dia_struct_ptr->remained_node_avltree_header.compare_function = naughty_memory_diagnosis_avltree_node_compare;
 	mem_dia_struct_ptr->backtrace_stop_address = NULL;
 	mem_dia_struct_ptr->max_backtrace_depth = backtrace_depth;
 	mem_dia_struct_ptr->exception = naughty_exception_no;

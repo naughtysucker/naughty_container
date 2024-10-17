@@ -60,11 +60,11 @@ extern void *naughty_memory_diagnosis_memory_calloc(struct naughty_memory_diagno
 
 extern int32_t naughty_memory_diagnosis_avltree_node_compare(struct naughty_avltree_node *node1, struct naughty_avltree_node *node2);
 
-extern naughty_exception naughty_memory_diagnosis_struct_initial(struct naughty_memory_diagnosis_struct *mem_dia_struct_ptr, size_t backtrace_depth);
+extern naughty_exception naughty_memory_diagnosis_struct_initialize(struct naughty_memory_diagnosis_struct *mem_dia_struct_ptr, size_t backtrace_depth);
 
 extern naughty_exception naughty_memory_diagnosis_output_to_file(struct naughty_memory_diagnosis_struct *mem_dia_struct_ptr, FILE *opened_fp);
 
-extern naughty_exception naughty_global_memory_diagnosis_struct_initial(size_t size);
+extern naughty_exception naughty_global_memory_diagnosis_struct_initialize(size_t size);
 
 extern naughty_exception naughty_global_memory_diagnosis_output_to_file(FILE *opened_fp);
 

@@ -94,13 +94,13 @@ naughty_exception naughty_avltree_alloc_node_by_size(struct naughty_avltree_head
 naughty_exception naughty_avltree_release_node_by_offset(struct naughty_avltree_header *avltree_header_ptr, struct naughty_avltree_node *avltree_node_ptr, ssize_t offset);
 
 /**_Description
- *  @Initial avl tree.
+ *  @Initialize avl tree.
  * _Parameters
  *  @header_ptr: Avl tree's header.
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_avltree_initial(struct naughty_avltree_header *header_ptr);
+naughty_exception naughty_avltree_initialize(struct naughty_avltree_header *header_ptr, int32_t (*compare_function)(struct naughty_avltree_node *, struct naughty_avltree_node *));
 
 /**_Description
  *  @Set Avl Tree's Malloc and Free functions.

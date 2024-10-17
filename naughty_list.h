@@ -56,7 +56,7 @@ extern "C"
  * _Return
  *  @Exceptions.
  */
-#define naughty_list_alloc_node(list_header_ptr, container_type, list_node_member, list_node_ptr_ptr) naughty_list_alloc_node_by_size(list_header_ptr, sizeof(container_type), 0, (ssize_t)&((container_type *)0)->list_node_member, list_node_ptr_ptr)
+#define naughty_list_alloc_node(list_header_ptr, container_type, list_node_member, list_node_ptr_ptr) naughty_list_alloc_node_by_size(list_header_ptr, sizeof(container_type), (ssize_t)&((container_type *)0)->list_node_member, list_node_ptr_ptr)
 
 /**_Description
  *  @Release all of the list's nodes.
@@ -79,7 +79,7 @@ extern "C"
  * _Return
  *  @Exceptions
  */
-#define naughty_list_remove_release_node(list_header_ptr, removed_list_node_ptr, container_type, list_node_member) naughty_list_remove_release_node_by_offset(list_header_ptr, removed_list_node_ptr, -(ssize_t)&((container_type *)0)->list_node_member)
+#define naughty_list_remove_node(list_header_ptr, removed_list_node_ptr, container_type, list_node_member) naughty_list_remove_node_by_offset(list_header_ptr, removed_list_node_ptr, -(ssize_t)&((container_type *)0)->list_node_member)
 
 /**_Description
  *  @Release a Stand Alone list node.
@@ -109,8 +109,8 @@ struct naughty_list_header
 	size_t list_size;
 	void* (*memory_alloc)(size_t);
 	void (*memory_free)(void *);
+	int32_t (*compare_function)(struct naughty_list_node *, struct naughty_list_node *);
 };
-
 
 /**_Description
  *  @Remove one node from list and modify header.
@@ -120,24 +120,14 @@ struct naughty_list_header
  * _Return
  *  @Exceptions
  */
-extern naughty_exception naughty_list_remove_node(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr);
-
-/**_Description
- *  @Remove one node from list and modify header and release the node if the space of node is alloced with memory_alloc.
- * _Parameters
- *  @list_header_ptr: The header's pointer of list.
- *  @removed_list_node_ptr: Pointer of the node which will be removed from list.
- * _Return
- *  @Exceptions
- */
-extern naughty_exception naughty_list_remove_release_node_by_offset(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr, ssize_t offset);
+extern naughty_exception naughty_list_remove_node_by_offset(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr, ssize_t offset);
 
 /**_Description
  *  @Insert one node into list and modify the list's header.
  * _Parameters
  *  @list_header_ptr: Pointer of list's header.
  *  @origin_list_ptr: Pointer of one node in list already.
- *  @inserted_list_node_ptr: Pointer of the node which will be inserted after the origin_list_node.
+ *  @inserted_list_node_ptr: Pointer of the node which will be inserted before the origin_list_node.
  * _Return
  *  @Exceptions
  */
@@ -155,13 +145,13 @@ extern naughty_exception naughty_list_insert_node(struct naughty_list_header *li
 extern naughty_exception naughty_list_insert_after(struct naughty_list_header *list_header_ptr, void *origin_list_ptr, struct naughty_list_node *inserted_list_node_ptr);
 
 /**_Description
- *  @Initial list header.
+ *  @Initialize list header.
  * _Parameters
  *  @list_header_ptr: Pointer of list header.
  * _Return
  *  @Exceptions
  */
-extern naughty_exception naughty_list_initial(struct naughty_list_header *list_header_ptr);
+extern naughty_exception naughty_list_initialize(struct naughty_list_header *list_header_ptr, int32_t (*compare_function)(struct naughty_list_node *, struct naughty_list_node *));
 
 /**_Description
  *  @Get list's size.
@@ -182,6 +172,19 @@ extern naughty_exception naughty_list_get_size(struct naughty_list_header *list_
  *  @Exceptions.
  */
 extern naughty_exception naughty_list_at(struct naughty_list_header *list_header_ptr, size_t index, struct naughty_list_node **output_list_node_ptr_ptr);
+
+/**_Description
+ *  @Alloc a list node.
+ * _Parameters
+ *  @list_header_ptr: Pointer of list header.
+ *  @container_memory_size: Size of memory will be alloced for container.
+ *  @data_memory_size: Size of memory will be alloced for data.
+ *  @offset: Address of list node minus container_of(list node).
+ *  @list_node_ptr_ptr: Pointer of container's pointer.
+ * _Return
+ *  @Exceptions
+ */
+extern naughty_exception naughty_list_alloc_node_by_size(struct naughty_list_header *list_header_ptr, size_t container_memory_size, size_t offset, struct naughty_list_node **list_node_ptr_ptr);
 
 /**_Description
  *  @ Release a list node.
@@ -225,6 +228,35 @@ extern naughty_exception naughty_list_traversal(struct naughty_list_header *list
  *  @Exceptions
  */
 extern naughty_exception naughty_list_set_memory_function(struct naughty_list_header *list_header_ptr, void *(*mem_alloc)(size_t), void (*mem_free)(void *));
+
+/**_Description
+ *  @Merge Two Lists.
+ * _Parameters
+ *  @list_header_ptr01: (Input & Output). It should be Sorted.
+ *  @list_header_ptr02: (Input). This parameter will be cleared after merge. It should be Sorted.
+ * _Return
+ *  @Exception
+ */
+extern naughty_exception naughty_list_merge(struct naughty_list_header *list_header_ptr01, struct naughty_list_header *list_header_ptr02, int32_t (*compare_function)(struct naughty_list_node *, struct naughty_list_node *));
+
+/**_Description
+ *  @Remove the node from the list, but not release the node's memory.
+ * _Parameters
+ *  @list_header_ptr: Pointer of the list.
+ *  @list_node_ptr: Pointer of the node which to be removed from the list.
+ * _Return
+ *  @Exception
+ */
+extern naughty_exception naughty_list_unlink_node(struct naughty_list_header *list_header_ptr, struct naughty_list_node *list_node_ptr);
+
+/**_Description
+ *  @Sort the list.
+ * _Parameters
+ *  @list_header_ptr: Pointer of the list.
+ * _Return
+ *  @Exception.
+ */
+extern naughty_exception naughty_list_sort(struct naughty_list_header *list_header_ptr);
 
 #ifdef __cplusplus
 }

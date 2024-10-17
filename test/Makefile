@@ -1,13 +1,4 @@
-﻿# * *****************************************************************************
-# * @ Encoding: UTF-8
-# * @ File Name: Makefile
-# * @ Author: cal
-# * @ Email: naughtygeng@qq.com
-# * @ Created Time: 2021-Nov-19(Friday) 13:20:06
-# * @ All Rights Reserved
-# * *****************************************************************************
-
-all: test_avltree_performance test_memory_diagnosis test_memory_diagnosis_cpp
+﻿all: test_avltree_performance test_memory_diagnosis test_memory_diagnosis_cpp
 
 test_avltree_performance: ../naughty_avltree.c ../naughty_avltree.h ../naughty_list.c ../naughty_list.h ./test_avltree_performance.cc 
 	gcc ../naughty_avltree.c ../naughty_list.c -c -I.. -fPIC -g -std=gnu99
@@ -19,6 +10,14 @@ test_memory_diagnosis: ../naughty_avltree.c ../naughty_memory_diagnosis.c ./test
 test_memory_diagnosis_cpp: ../naughty_avltree.c ../naughty_memory_diagnosis.c ./test_memory_diagnosis.cc ../naughty_memory_diagnosis_interface.cc
 	gcc ../naughty_avltree.c ../naughty_memory_diagnosis.c -I.. -DUSE_BACKTRACE -c -g -std=gnu99
 	g++ ./naughty_avltree.o ./naughty_memory_diagnosis.o ../naughty_memory_diagnosis_interface.cc ./test_memory_diagnosis.cc -I.. -o memory_diagnosis_test_cpp -g
+
+test_list: ../naughty_list.c ../naughty_list.h
+	gcc $^ -I.. -c -g -std=c99 -DARCH_BIT_WIDTH=64
+	g++ ./naughty_list.o ./test_list.cc -I.. -o $@ -g
+
+test_fifo: ../naughty_fifo.c ../naughty_fifo.h
+	gcc $^ -I.. -c -g -std=c99 -DARCH_BIT_WIDTH=64
+	g++ ./naughty_fifo.o ./test_fifo.cc -I.. -o $@ -g
 
 .PHONY: clean
 

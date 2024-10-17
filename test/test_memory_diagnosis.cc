@@ -16,7 +16,7 @@ void *testfunc_cc()
 
 int main()
 {
-	int ex = naughty_global_memory_diagnosis_struct_initial(8);
+	int ex = naughty_global_memory_diagnosis_struct_initialize(8);
 
 	testfunc_cc();
 	int *intp = new int[30];
