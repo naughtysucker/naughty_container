@@ -23,6 +23,14 @@ test_heap: ../naughty_heap.c ../naughty_list.c
 	gcc $^ -I.. -c -g -std=c99 -DARCH_BIT_WIDTH=64
 	g++ ./naughty_heap.o ./naughty_list.o ./test_heap.cc -I.. -DUSE_BACKTRACE -g -o test_heap
 
+test_log: ../naughty_log.c ../naughty_log.h ../naughty_fifo.c ../naughty_fifo.h ./test_log.cc
+	gcc ../naughty_log.c ../naughty_fifo.c -I.. -c -g
+	g++ ./naughty_fifo.o ./naughty_log.o ./test_log.cc -I.. -o $@ -g
+
+test_set: ../naughty_avltree.c ../naughty_avltree.h ../naughty_set.h
+	gcc ../naughty_avltree.c -I.. -c -g -std=c99 -DARCH_BIT_WIDTH=64
+	gcc ./naughty_avltree.o ./test_set.c -I.. -o $@ -g
+
 .PHONY: clean
 
 clean:
