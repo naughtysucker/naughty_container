@@ -20,6 +20,7 @@ typedef enum naughty_exception
 	naughty_exception_outofrange = -5,
 	naughty_exception_notfound = -6,
 	naughty_exception_wrongparameter = -7,
+	naughty_exception_double_free = -8,
 }naughty_exception;
 
 

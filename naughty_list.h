@@ -116,7 +116,7 @@ extern "C"
  * _Return
  *  @Exceptions
  */
-#define naughty_list_remove_node(list_header_ptr, removed_list_node_ptr, container_type, list_node_member) naughty_list_remove_node_by_offset(list_header_ptr, removed_list_node_ptr, -(ssize_t)&((container_type *)0)->list_node_member)
+#define naughty_list_remove_release_node(list_header_ptr, removed_list_node_ptr, container_type, list_node_member) naughty_list_remove_release_node_by_offset(list_header_ptr, removed_list_node_ptr, -(ssize_t)&((container_type *)0)->list_node_member)
 
 /**_Description
  *  @Release a Stand Alone list node.
@@ -149,6 +149,7 @@ struct naughty_list_header
 	void (*memory_free)(void *);
 };
 
+
 /**_Description
  *  @Remove one node from list and modify header.
  * _Parameters
@@ -157,7 +158,17 @@ struct naughty_list_header
  * _Return
  *  @Exceptions
  */
-extern naughty_exception naughty_list_remove_node_by_offset(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr, ssize_t offset);
+extern naughty_exception naughty_list_remove_node(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr);
+
+/**_Description
+ *  @Remove one node from list and modify header and release the node if the space of node is alloced with memory_alloc.
+ * _Parameters
+ *  @list_header_ptr: The header's pointer of list.
+ *  @removed_list_node_ptr: Pointer of the node which will be removed from list.
+ * _Return
+ *  @Exceptions
+ */
+extern naughty_exception naughty_list_remove_release_node_by_offset(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr, ssize_t offset);
 
 /**_Description
  *  @Insert one node into list and modify the list's header.

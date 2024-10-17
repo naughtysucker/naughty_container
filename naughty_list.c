@@ -21,11 +21,10 @@ extern "C"
  * _Parameters
  *  @list_header_ptr: The header's pointer of list.
  *  @removed_list_node_ptr: Pointer of the node which will be removed from list.
- *  @offset: Address of container_of(list node) minus address of list node.
  * _Return
  *  @Exceptions
  */
-naughty_exception naughty_list_remove_node_by_offset(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr, ssize_t offset)
+extern naughty_exception naughty_list_remove_node(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr)
 {
 	naughty_exception func_exception = naughty_exception_no;
 
@@ -61,12 +60,33 @@ naughty_exception naughty_list_remove_node_by_offset(struct naughty_list_header 
 		goto func_end;
 	}
 
-	if (removed_list_node_ptr->data_ptr)
+func_end:
+	return func_exception;
+}
+
+/**_Description
+ *  @Remove one node from list and modify header.
+ * _Parameters
+ *  @list_header_ptr: The header's pointer of list.
+ *  @removed_list_node_ptr: Pointer of the node which will be removed from list.
+ *  @offset: Address of container_of(list node) minus address of list node.
+ * _Return
+ *  @Exceptions
+ */
+naughty_exception naughty_list_remove_release_node_by_offset(struct naughty_list_header *list_header_ptr, struct naughty_list_node *removed_list_node_ptr, ssize_t offset)
+{
+	naughty_exception func_exception = naughty_exception_no;
+
+	func_exception = naughty_list_remove_node(list_header_ptr, removed_list_node_ptr);
+
+	if (func_exception != naughty_exception_no)
 	{
-		list_header_ptr->memory_free(removed_list_node_ptr->data_ptr);
+		goto func_end;
 	}
-	list_header_ptr->memory_free((uint8_t *)removed_list_node_ptr + offset);
+
 	list_header_ptr->list_size -= 1;
+
+	func_exception = naughty_list_release_node_by_offset(list_header_ptr, removed_list_node_ptr, offset);
 
 func_end:
 	return func_exception;
@@ -323,13 +343,16 @@ naughty_exception naughty_list_alloc_node_by_size(struct naughty_list_header *li
 	goto func_end;
 	
 func_alloc_exception:
-	if (container_memory_ptr)
+	if (list_header_ptr->memory_free)
 	{
-		list_header_ptr->memory_free(container_memory_ptr);
-	}
-	if (data_memory_ptr)
-	{
-		list_header_ptr->memory_free(data_memory_ptr);
+		if (container_memory_ptr)
+		{
+			list_header_ptr->memory_free(container_memory_ptr);
+		}
+		if (data_memory_ptr)
+		{
+			list_header_ptr->memory_free(data_memory_ptr);
+		}
 	}
 func_end:
 	return func_exception;
@@ -354,11 +377,14 @@ naughty_exception naughty_list_release_node_by_offset(struct naughty_list_header
 		goto func_end;
 	}
 
-	if (list_node_ptr->data_ptr)
+	if (list_header_ptr->memory_free)
 	{
-		list_header_ptr->memory_free(list_node_ptr->data_ptr);
+		if (list_node_ptr->data_ptr)
+		{
+			list_header_ptr->memory_free(list_node_ptr->data_ptr);
+		}
+		list_header_ptr->memory_free((uint8_t *)list_node_ptr + offset);
 	}
-	list_header_ptr->memory_free((uint8_t *)list_node_ptr + offset);
 
 func_end:
 	return naughty_exception_no;
