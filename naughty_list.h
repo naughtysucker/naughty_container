@@ -17,9 +17,6 @@ extern "C"
 
 #include "naughty_exception.h"
 #include "naughty_common.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 /**_Description
  *  @Alloc a list node container with list header's memory_alloc function.

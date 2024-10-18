@@ -8,8 +8,6 @@
  * *****************************************************************************/
 
 #include "naughty_list.h"
-#include <stdint.h>
-#include <stdio.h>
 
 #ifdef __cpluscplus
 extern "C"

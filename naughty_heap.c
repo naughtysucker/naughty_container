@@ -1,6 +1,4 @@
 #include "naughty_heap.h"
-#include "assert.h"
-#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -78,7 +76,7 @@ naughty_exception naughty_heap_take_block(struct naughty_heap_t *heap_ptr, struc
 
     void *new_block_address = naughty_heap_get_block_data_address(heap_node_ptr) + take_size;
 
-    if (heap_node_ptr->heap_list_node.next && new_block_address < (void *)naughty_container_of(heap_node_ptr->heap_list_node.next, struct naughty_heap_list_container_t, heap_list_node))
+    if (heap_node_ptr->heap_list_node.next && new_block_address < (void *)(naughty_container_of(heap_node_ptr->heap_list_node.next, struct naughty_heap_list_container_t, heap_list_node) - 1))
     {
         struct naughty_heap_list_container_t *new_block_node = (struct naughty_heap_list_container_t*)new_block_address;
         new_block_node->is_under_using = 0;

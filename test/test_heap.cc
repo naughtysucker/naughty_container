@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <vector>
 #include <random>
+#include <string.h>
 
 struct naughty_heap_t g_heap_ins;
 
@@ -25,6 +26,7 @@ int main()
         res = naughty_heap_alloc(&g_heap_ins, r_siz, &bufs[i]);
         assert(res == naughty_exception_no);
         printf("Alloc Buffer: 0x%p     Size: %d \r\n", bufs[i], r_siz);
+        memset(bufs[i], 0xA5, r_siz);
     }
 
     for (int i = 0; i < 100; i++)
