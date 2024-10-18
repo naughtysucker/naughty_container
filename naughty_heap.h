@@ -7,6 +7,8 @@ extern "C"
 {
 #endif
 
+#define NAUGHTY_HEAP_ALIGN_BYTE_COUNT 4
+
 struct naughty_heap_list_container_t
 {
     uint64_t verify_number;
@@ -23,7 +25,8 @@ struct naughty_heap_t
     void *end_addr;
 };
 
-#define naughty_heap_get_block_data_address(heap_list_container_ptr) ((byte_t*)heap_list_container_ptr + sizeof(struct naughty_heap_list_container_t))
+#define naughty_heap_get_unaligned_block_data_address(heap_list_container_ptr) ((byte_t*)heap_list_container_ptr + sizeof(struct naughty_heap_list_container_t))
+#define naughty_heap_get_next_aligned_address(unaligned_address) ((byte_t*)unaligned_address + ((NAUGHTY_HEAP_ALIGN_BYTE_COUNT - ((size_t)unaligned_address % NAUGHTY_HEAP_ALIGN_BYTE_COUNT)) % NAUGHTY_HEAP_ALIGN_BYTE_COUNT))
 
 naughty_exception naughty_heap_initialize(struct naughty_heap_t *heap_ptr, void *begin_addr, void *end_addr, uint64_t verify_number);
 
